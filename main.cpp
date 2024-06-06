@@ -4,27 +4,28 @@
 using namespace std;
 
 // setting the constant variables
-const int groups_count = 3;
-const int students_per_group = 50;
-const int sports_count = 4;
-const int clubs_count = 5;
-const int sports_max_capacity = 20;
-const int clubs_max_capacity = 60;
-const int sports_min_members = 1;
-const int clubs_min_members = 1;
-const int sports_max_male_percentage = 75;
-const int clubs_max_male_percentage = 50;
+const int groups_count = 3; // number of groups
+const int students_per_group = 50; // number of students per group
+const int sports_count = 4; // number of sporting activities
+const int clubs_count = 5; // number of club/societies activities
+const int sports_max_capacity = 20; // maximum capacity for each sporting activity
+const int clubs_max_capacity = 60; // maximum capacity for each club/societies activity
+const int sports_min_members = 1; // minimum number of members required for each sporting activity
+const int clubs_min_members = 1; // minimum number of members required for each club/societies activity
+const int sports_max_male_percentage = 75; // maximum percentage of male members allowed for each sporting activity
+const int clubs_max_male_percentage = 50; // maximum percentage of male members allowed for each club/societies activity
 
 int main() {
+    // initialize a map to store the count of male and female students
     std::map<std::string, int> gender_count;
     gender_count["male"] = 0;
     gender_count["female"] = 0;
 
-    // displays group class and how many students per group
+    // display group class and how many students per group
     int total_students = 0;
     for (int i = 0; i < groups_count; i++) {
         cout << "Group " << i + 1 << " has " << students_per_group << " students. \n";
-        // will output and request user to put in name of the student first then the gender
+        // loop through each student in the group
         for (int j = 0; j < students_per_group; j++) {
             string name;
             cout << "Enter name of student " << j + 1 << ": ";
@@ -34,6 +35,7 @@ int main() {
             cout << "Enter gender (Male/Female) of student " << j + 1 << ": ";
             cin >> gender;
 
+            // update the gender count
             if (gender == "male") {
                 gender_count["male"]++;
             } else if (gender == "female") {
@@ -49,6 +51,11 @@ int main() {
             cout << "Enter co-curricular activities for student " << j + 1 << ":\n";
             int sport_count = 0;
             int club_count = 0;
+            map<string, int> sports_members;
+            map<string, int> clubs_members;
+            map<string, int> sports_male_members;
+            map<string, int> clubs_male_members;
+
             while (true) {
                 cout << "Do you want to participate in a sporting activity? (1 = Yes, 2 = No)\n";
                 int sport_choice;
@@ -62,13 +69,49 @@ int main() {
                     cout << "4. Soccer\n";
                     int sport_activity;
                     cin >> sport_activity;
-                    sport_count++;
+                    string sport_name;
+                    switch (sport_activity) {
+                        case 1:
+                            sport_name = "Rugby";
+                            break;
+                        case 2:
+                            sport_name = "Athletics";
+                            break;
+                        case 3:
+                            sport_name = "Swimming";
+                            break;
+                        case 4:
+                            sport_name = "Soccer";
+                            break;
+                    }
+
+                    // check if the sporting activity has reached maximum capacity
+                    if (sports_members[sport_name] < sports_max_capacity) {
+                        sports_members[sport_name]++;
+                        // update the male member count for the sporting activity
+                        if (gender == "male") {
+                            sports_male_members[sport_name]++;
+                        }
+                        sport_count++;
+                    } else {
+                        cout << "Sporting activity " << sport_name << " has reached maximum capacity.\n";
+                    }
+
+                    // check if the sporting activity has at least minimum members
+                    if (sports_members[sport_name] < sports_min_members) {
+                        cout << "Sporting activity " << sport_name << " needs at least " << sports_min_members << " members.\n";
+                    }
+
+                    // check if the sporting activity has exceeded maximum male percentage
+                    if (sports_male_members[sport_name] > (sports_members[sport_name] * sports_max_male_percentage / 100)) {
+                        cout << "Sporting activity " << sport_name << " has exceeded maximum male percentage.\n";
+                    }
                 } else {
                     break;
                 }
 
                 if (sport_count > 0) {
-                    cout << "Do you want to participate in a club/societies activity? (1 = Yes, 2 = No)\n";
+                                        cout << "Do you want to participate in a club/societies activity? (1 = Yes, 2 = No)\n";
                     int club_choice;
                     cin >> club_choice;
 
@@ -81,13 +124,45 @@ int main() {
                         cout << "5. Computer Science Club\n";
                         int club_activity;
                         cin >> club_activity;
-                        club_count++;
-                    } else {
-                        break;
-                    }
+                        string club_name;
+                        switch (club_activity) {
+                            case 1:
+                                club_name = "Journalism Club";
+                                break;
+                            case 2:
+                                club_name = "Red Cross Society";
+                                break;
+                            case 3:
+                                club_name = "AISEC";
+                                break;
+                            case 4:
+                                club_name = "Business Club";
+                                break;
+                            case 5:
+                                club_name = "Computer Science Club";
+                                break;
+                        }
 
-                    if (club_count > 2) {
-                        cout << "You have already selected two club/societies activities. No more activities can be added.\n";
+                        if (clubs_members[club_name] < clubs_max_capacity) {
+                            clubs_members[club_name]++;
+                            if (gender == "male") {
+                                clubs_male_members[club_name]++;
+                            }
+                            club_count++;
+                        } else {
+                            cout << "Club/Societies activity " << club_name << " has reached maximum capacity.\n";
+                        }
+
+                        // check if the club/societies activity has at least minimum members
+                        if (clubs_members[club_name] < clubs_min_members) {
+                            cout << "Club/Societies activity " << club_name << " needs at least " << clubs_min_members << " members.\n";
+                        }
+
+                        // check if the club/societies activity has exceeded maximum male percentage
+                        if (clubs_male_members[club_name] > (clubs_members[club_name] * clubs_max_male_percentage / 100)) {
+                            cout << "Club/Societies activity " << club_name << " has exceeded maximum male percentage.\n";
+                        }
+                    } else {
                         break;
                     }
                 }
@@ -95,6 +170,12 @@ int main() {
         }
     }
 
+    // display the total number of students
+    cout << "Total number of students: " << total_students << "\n";
+
+    // display the gender count
+    cout << "Male students: " << gender_count["male"] << "\n";
+    cout << "Female students: " << gender_count["female"] << "\n";
+    
     return 0;
 }
-    
