@@ -56,9 +56,11 @@ int main() {
 
             cout << "Enter co-curricular activities for student " << j + 1 << ":\n";
             while (true) {
-                cout << "1. Sporting activities\n2. Club/Societies activities\n";
                 int choice;
-                cin >> choice;
+               cout << "1. Sporting activities";
+               cin >> choice;
+               cout << "\n2. Club/Societies activities";
+               cin >> choice;
 
                 if (choice == 1) {
                     if (sport_count < 1) {
