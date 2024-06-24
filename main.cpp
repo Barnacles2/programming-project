@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <vector>
 using namespace std;
 
 // setting the constant variables
@@ -15,167 +16,237 @@ const int clubs_min_members = 1; // minimum number of members required for each 
 const int sports_max_male_percentage = 75; // maximum percentage of male members allowed for each sporting activity
 const int clubs_max_male_percentage = 50; // maximum percentage of male members allowed for each club/societies activity
 
-int main() {
-    // initialize a map to store the count of male and female students
-    std::map<std::string, int> gender_count;
-    gender_count["male"] = 0;
-    gender_count["female"] = 0;
+// define a struct to represent a student
+struct Student {
+    string firstname;
+    string surname;
+    string gender;
+    int age;
+    int group;
+    string sport;
+    string club;
+};
 
-    // display group class and how many students per group
-    int total_students = 0;
-    for (int i = 0; i < groups_count; i++) {
-        cout << "Group " << i + 1 << " has " << students_per_group << " students. \n";
-        // loop through each student in the group
-        for (int j = 0; j < students_per_group; j++) {
-            string name;
-            cout << "Enter name of student " << j + 1 << ": ";
-            cin >> name;
+// vector to store all students
+vector<Student> students;
 
-            string gender;
-            cout << "Enter gender (Male/Female) of student " << j + 1 << ": ";
-            cin >> gender;
+// maps to store the count of members for each sporting activity and club/society
+map<string, int> sports_members;
+map<string, int> clubs_members;
 
-            // update the gender count
-            if (gender == "male") {
-                gender_count["male"]++;
-            } else if (gender == "female") {
-                gender_count["female"]++;
-            } else {
-                cout << "Invalid gender. Try again. \n";
-                j--;
-                continue;
-            }
-            total_students++;
+// maps to store the count of male members for each sporting activity and club/society
+map<string, int> sports_male_members;
+map<string, int> clubs_male_members;
 
-            // co-curricular activities
-            cout << "Enter co-curricular activities for student " << j + 1 << ":\n";
-            int sport_count = 0;
-            int club_count = 0;
-            map<string, int> sports_members;
-            map<string, int> clubs_members;
-            map<string, int> sports_male_members;
-            map<string, int> clubs_male_members;
+// function to add a new student
+void addStudent() {
+    Student student;
+    cout << "Enter firstname: ";
+    cin >> student.firstname;
+    cout << "Enter surname: ";
+    cin >> student.surname;
+    cout << "Enter gender (Male/Female): ";
+    cin >> student.gender;
+    cout << "Enter age: ";
+    cin >> student.age;
+    cout << "Enter group (1-" << groups_count << "): ";
+    cin >> student.group;
 
-            while (true) {
-                cout << "Do you want to participate in a sporting activity? (1 = Yes, 2 = No)\n";
-                int sport_choice;
-                cin >> sport_choice;
+    // add option to choose a sport
+    cout << "Choose a sport (1-4): \n";
+    cout << "1. Rugby\n";
+    cout << "2. Athletics\n";
+    cout << "3. Swimming\n";
+    cout << "4. Soccer\n";
+    int sport_choice;
+    cin >> sport_choice;
+    string sport_name;
+    switch (sport_choice) {
+        case 1:
+            sport_name = "Rugby";
+            break;
+        case 2:
+            sport_name = "Athletics";
+            break;
+        case 3:
+            sport_name = "Swimming";
+            break;
+        case 4:
+            sport_name = "Soccer";
+            break;
+        default:
+            cout << "Invalid sport choice. Try again.\n";
+            return;
+    }
+    student.sport = sport_name;
+    // update the sports_members map
+    sports_members[sport_name]++;
+    if (student.gender == "male") {
+        sports_male_members[sport_name]++;
+    }
 
-                if (sport_choice == 1) {
-                    cout << "Select a sporting activity:\n";
-                    cout << "1. Rugby\n";
-                    cout << "2. Athletics\n";
-                    cout << "3. Swimming\n";
-                    cout << "4. Soccer\n";
-                    int sport_activity;
-                    cin >> sport_activity;
-                    string sport_name;
-                    switch (sport_activity) {
-                        case 1:
-                            sport_name = "Rugby";
-                            break;
-                        case 2:
-                            sport_name = "Athletics";
-                            break;
-                        case 3:
-                            sport_name = "Swimming";
-                            break;
-                        case 4:
-                            sport_name = "Soccer";
-                            break;
-                    }
+    // add option to choose a club
+    cout << "Choose a club (1-5): \n";
+    cout << "1. Debate\n";
+    cout << "2. Music\n";
+    cout << "3. Drama\n";
+    cout << "4. Art\n";
+    cout << "5. Robotics\n";
+    int club_choice;
+    cin >> club_choice;
+    string club_name;
+    switch (club_choice) {
+        case 1:
+            club_name = "Debate";
+            break;
+        case 2:
+            club_name = "Music";
+            break;
+        case 3:
+            club_name = "Drama";
+            break;
+        case 4:
+            club_name = "Art";
+            break;
+        case 5:
+            club_name = "Robotics";
+            break;
+        default:
+            cout << "Invalid club choice. Try again.\n";
+            return;
+    }
+    student.club = club_name;
+    // update the clubs_members map
+    clubs_members[club_name]++;
+    if (student.gender == "male") {
+        clubs_male_members[club_name]++;
+    }
 
-                    // check if the sporting activity has reached maximum capacity
-                    if (sports_members[sport_name] < sports_max_capacity) {
-                        sports_members[sport_name]++;
-                        // update the male member count for the sporting activity
-                        if (gender == "male") {
-                            sports_male_members[sport_name]++;
-                        }
-                        sport_count++;
-                    } else {
-                        cout << "Sporting activity " << sport_name << " has reached maximum capacity.\n";
-                    }
+    students.push_back(student);
+}
 
-                    // check if the sporting activity has at least minimum members
-                    if (sports_members[sport_name] < sports_min_members) {
-                        cout << "Sporting activity " << sport_name << " needs at least " << sports_min_members << " members.\n";
-                    }
-
-                    // check if the sporting activity has exceeded maximum male percentage
-                    if (sports_male_members[sport_name] > (sports_members[sport_name] * sports_max_male_percentage / 100)) {
-                        cout << "Sporting activity " << sport_name << " has exceeded maximum male percentage.\n";
-                    }
-                } else {
-                    break;
-                }
-
-                if (sport_count > 0) {
-                                        cout << "Do you want to participate in a club/societies activity? (1 = Yes, 2 = No)\n";
-                    int club_choice;
-                    cin >> club_choice;
-
-                    if (club_choice == 1) {
-                        cout << "Select a club/societies activity:\n";
-                        cout << "1. Journalism Club\n";
-                        cout << "2. Red Cross Society\n";
-                        cout << "3. AISEC\n";
-                        cout << "4. Business Club\n";
-                        cout << "5. Computer Science Club\n";
-                        int club_activity;
-                        cin >> club_activity;
-                        string club_name;
-                        switch (club_activity) {
-                            case 1:
-                                club_name = "Journalism Club";
-                                break;
-                            case 2:
-                                club_name = "Red Cross Society";
-                                break;
-                            case 3:
-                                club_name = "AISEC";
-                                break;
-                            case 4:
-                                club_name = "Business Club";
-                                break;
-                            case 5:
-                                club_name = "Computer Science Club";
-                                break;
-                        }
-
-                        if (clubs_members[club_name] < clubs_max_capacity) {
-                            clubs_members[club_name]++;
-                            if (gender == "male") {
-                                clubs_male_members[club_name]++;
-                            }
-                            club_count++;
-                        } else {
-                            cout << "Club/Societies activity " << club_name << " has reached maximum capacity.\n";
-                        }
-
-                        // check if the club/societies activity has at least minimum members
-                        if (clubs_members[club_name] < clubs_min_members) {
-                            cout << "Club/Societies activity " << club_name << " needs at least " << clubs_min_members << " members.\n";
-                        }
-
-                        // check if the club/societies activity has exceeded maximum male percentage
-                        if (clubs_male_members[club_name] > (clubs_members[club_name] * clubs_max_male_percentage / 100)) {
-                            cout << "Club/Societies activity " << club_name << " has exceeded maximum male percentage.\n";
-                        }
-                    } else {
-                        break;
-                    }
-                }
+// function to view all students or students by group
+void viewStudents() {
+    cout << "Viewing all students:\n";
+    for (const auto& student : students) {
+        cout << "Firstname: " << student.firstname << ", Surname: " << student.surname << ", Gender: " << student.gender << ", Age: " << student.age << ", Group: " << student.group << ", Sport: " << student.sport << ", Club: " << student.club << "\n";
+    }
+    cout << "Viewing students by group:\n";
+    for (int i = 1;i <= groups_count; i++) {
+        cout << "Group " << i << ":\n";
+        for (const auto& student : students) {
+            if (student.group == i) {
+                cout << "Firstname: " << student.firstname << ", Surname: " << student.surname << ", Gender: " << student.gender << ", Age: " << student.age << ", Sport: " << student.sport << ", Club: " << student.club << "\n";
             }
         }
     }
+}
 
-    // display the total number of students
-    cout << "Total number of students: " << total_students << "\n";
+// function to view available clubs and societies
+void viewClubsSocieties() {
+    cout << "Available clubs and societies:\n";
+    cout << "1. Debate\n";
+    cout << "2. Music\n";
+    cout << "3. Drama\n";
+    cout << "4. Art\n";
+    cout << "5. Robotics\n";
+    cout << "Available capacity for each club/society: " << clubs_max_capacity << "\n";
+}
 
-    // display the gender count
-    cout << "Male students: " << gender_count["male"] << "\n";
-    cout << "Female students: " << gender_count["female"] << "\n";
-    
+// function to view available sporting activities
+void viewSports() {
+    cout << "Available sporting activities:\n";
+    cout << "1. Rugby\n";
+    cout << "2. Athletics\n";
+    cout << "3. Swimming\n";
+    cout << "4. Soccer\n";
+    cout << "Available capacity for each sporting activity: " << sports_max_capacity << "\n";
+}
+
+// function to view students participating in a specific activity
+void viewGroupedStudents() {
+    cout << "Enter activity (1-4 for sporting activities, 5-9 for clubs/societies): ";
+    int activity;
+    cin >> activity;
+    string activity_name;
+    switch (activity) {
+        case 1:
+            activity_name = "Rugby";
+            break;
+        case 2:
+            activity_name = "Athletics";
+            break;
+        case 3:
+            activity_name = "Swimming";
+            break;
+        case 4:
+            activity_name = "Soccer";
+            break;
+        case 5:
+            activity_name = "Debate";
+            break;
+        case 6:
+            activity_name = "Music";
+            break;
+        case 7:
+            activity_name = "Drama";
+            break;
+        case 8:
+            activity_name = "Art";
+            break;
+        case 9:
+            activity_name = "Robotics";
+            break;
+default:
+            cout << "Invalid activity. Try again.\n";
+            return;
+    }
+    cout << "Students participating in " << activity_name << ":\n";
+    for (const auto& student : students) {
+        // check if the student is participating in the activity
+        // (this logic is not implemented, you need to add it)
+        cout << "Firstname: " << student.firstname << ", Surname: " << student.surname << "\n";
+    }
+}
+
+int main() {
+    int choice;
+    while (true) {
+        cout << "Menu:\n";
+        cout << "1. Add Student\n";
+        cout << "2. View Students\n";
+        cout << "3. View Clubs/Societies\n";
+        cout << "4. View Sports\n";
+        cout << "5. View Grouped Students\n";
+        cout << "6. Save all Files\n";
+        cout << "7. Exit\n";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addStudent();
+                break;
+            case 2:
+                viewStudents();
+                break;
+            case 3:
+                viewClubsSocieties();
+                break;
+            case 4:
+                viewSports();
+                break;
+            case 5:
+                viewGroupedStudents();
+                break;
+            case 6:
+                // save all files (not implemented)
+                break;
+            case 7:
+                return 0;
+            default:
+                cout << "Invalid choice. Try again.\n";
+        }
+    }
+
     return 0;
 }
