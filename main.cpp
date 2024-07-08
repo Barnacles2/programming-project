@@ -22,7 +22,6 @@ struct Student {
 
 Student students[150]; // array to store all students
 int student_count = 0; // count of students
-
 void addStudent() {
     Student student;
     cout << "Enter firstname: ";
